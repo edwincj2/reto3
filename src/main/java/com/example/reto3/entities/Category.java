@@ -53,14 +53,4 @@ public class Category implements Serializable {
         this.costumes = costumes;
     }
 
-    public Category() {
-    }
-
-    public Category(Integer id, String name, String description, List<Costume> costumes) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.costumes = costumes;
-    }
 }
-

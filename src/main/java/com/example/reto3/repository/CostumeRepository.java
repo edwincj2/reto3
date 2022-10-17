@@ -30,4 +30,3 @@ public class CostumeRepository {
         costumeCrudRepository.delete(costume);
     }
 }
-

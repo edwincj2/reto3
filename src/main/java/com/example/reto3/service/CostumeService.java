@@ -14,7 +14,7 @@ public class CostumeService {
     private CostumeRepository costumeRepository;
 
     public List<Costume> getAll(){
-        return costumeRepository.getAll();
+        return (List<Costume>) costumeRepository.getAll();
     }
 
     public Optional<Costume> getCostume(int id){
@@ -22,63 +22,59 @@ public class CostumeService {
     }
 
     public Costume save(Costume costume){
-        if (costume.getId()==null){
-            return costumeRepository.save(costume);
-        }else {
-            Optional<Costume> e = costumeRepository.getCostume(costume.getId());
-            if (e.isPresent()){
-                return costume;
-            }else{
+        if(validarCampos(costume)){
+            if(costume.getId()==null){
                 return costumeRepository.save(costume);
+            }else {
+                Optional<Costume> costumeEncontrado= getCostume(costume.getId());
+                if(costumeEncontrado.isEmpty()){
+                    return costumeRepository.save(costume);
+                }else {
+                    return costume;
+                }
             }
         }
+        return costume;
     }
-
     public Costume update(Costume costume){
-        if (costume.getId()!=null){
-            Optional<Costume> q = costumeRepository.getCostume(costume.getId());
-            if (!q.isEmpty()){
-                if (costume.getName() !=null) {
-                    q.get().setName(costume.getName());
-                }if (costume.getBrand()!=null){
-                    q.get().setBrand(costume.getBrand());
-                }if (costume.getYear()!=null){
-                    q.get().setYear(costume.getYear());
-                }if (costume.getDescription()!=null){
-                    q.get().setDescription(costume.getDescription());
-                }if (costume.getCategory()!=null){
-                    q.get().setCategory(costume.getCategory());
+        if(validarCampos(costume)) {
+            if (costume.getId() != null) {
+                Optional<Costume> costumeEncontrado = getCostume(costume.getId());
+                if (!costumeEncontrado.isEmpty()) {
+                    if (costume.getName() != null) {
+                        costumeEncontrado.get().setName(costume.getName());
+                    }
+                    if (costume.getBrand() != null) {
+                        costumeEncontrado.get().setBrand(costume.getBrand());
+                    }
+                    if (costume.getYear() != null) {
+                        costumeEncontrado.get().setYear(costume.getYear());
+                    }
+                    if (costume.getDescription() != null) {
+                        costumeEncontrado.get().setDescription(costume.getDescription());
+                    }
+                    if (costume.getCategory() != null) {
+                        costumeEncontrado.get().setCategory(costume.getCategory());
+                    }
+                    return costumeRepository.save(costumeEncontrado.get());
                 }
-                costumeRepository.save(q.get());
-                return q.get();
-            }else {
-                return costume;
+
             }
-        }else{
             return costume;
         }
+        return costume;
     }
 
-
-
-
-//    public boolean delete(int id){
-//        boolean flag =false;
-//        Optional<Costume>p= costumeRepository.getCostume(id);
-//        if (p.isPresent()){
-//            costumeRepository.delete(p.get());
-//            flag=true;
-//        }
-//        return flag;
-//    }
-
-    public boolean deleteCustome (int id){
-        Boolean d = getCostume(id).map(costume -> {
-            costumeRepository.delete(costume);
+    public boolean delete(int id){
+        Boolean resultado= getCostume(id).map(elemento ->{
+            costumeRepository.delete(elemento);
             return true;
         }).orElse(false);
-        return d;
+        return resultado;
+    }
+
+    public boolean validarCampos(Costume costume){
+        return (costume.getBrand().length()<= 45 && costume.getName().length()<=45 &&
+                String.valueOf(costume.getYear()).length()==4 && costume.getDescription().length()<=250);
     }
 }
-
-

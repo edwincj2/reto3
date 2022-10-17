@@ -14,45 +14,59 @@ public class ScoreService {
     @Autowired
     private ScoreRepository scoreRepository;
 
-    public List<Score> getAll(){
-        return scoreRepository.getAll();
+    public List<Score> getAll() {
+        return (List<Score>) scoreRepository.getAll();
     }
 
-    public Optional<Score> getScore(int id){
+    public Optional<Score> getScore(int id) {
         return scoreRepository.getScore(id);
     }
 
-    public Score save(Score p){
-        if (p.getId() == null) {
-            return scoreRepository.save(p);
-        } else {
-            Optional<Score> e = scoreRepository.getScore(p.getId());
-            if (e.isPresent()) {
-                return p;
+    public Score save(Score score) {
+        if (validarCampos(score)) {
+            if (score.getIdScore() == null) {
+                return scoreRepository.save(score);
             } else {
-                return scoreRepository.save(p);
+                Optional<Score> scoreEncontrado = getScore(score.getIdScore());
+                if (scoreEncontrado.isEmpty()) {
+                    return scoreRepository.save(score);
+                } else {
+                    return score;
+                }
             }
         }
+        return score;
     }
 
+    public Score update(Score score) {
+        if (validarCampos(score)) {
+            if (score.getIdScore() != null) {
+                Optional<Score> scoreEncontrado = getScore(score.getIdScore());
+                if (!scoreEncontrado.isEmpty()) {
+                    if (score.getMessageText() != null) {
+                        scoreEncontrado.get().setMessageText(score.getMessageText());
+                    }
+                    if (score.getPoints() != null) {
+                        scoreEncontrado.get().setPoints(score.getPoints());
+                    }
+                    return scoreRepository.save(scoreEncontrado.get());
+                }
+            }
+            return score;
+        }
+        return score;
+    }
 
-
-//    public boolean delete(int id){
-//        boolean flag =false;
-//        Optional<Score>p= scoreRepository.getScore(id);
-//        if (p.isPresent()){
-//            scoreRepository.delete(p.get());
-//            flag=true;
-//        }
-//        return flag;
-//    }
-
-    public boolean deleteScore(int id){
-        Boolean d = getScore(id).map(score -> {
-            scoreRepository.delete(score);
+    public boolean delete(int scoreId) {
+        Boolean resultado = getScore(scoreId).map(elemento -> {
+            scoreRepository.delete(elemento);
             return true;
         }).orElse(false);
-        return d;
+        return resultado;
     }
-}
 
+    public boolean validarCampos(Score score) {
+        return ((score.getPoints() >= 0 && score.getPoints() <= 5) && score.getMessageText().length() <= 250);
+    }
+
+}

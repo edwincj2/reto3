@@ -17,92 +17,58 @@ public class ClientService {
     public List<Client> getAll(){
         return clientRepository.getAll();
     }
-
     public Optional<Client> getClient(int id){
         return clientRepository.getClient(id);
     }
-
     public Client save(Client client){
-        if (client.getIdClient()==null){
-            return clientRepository.save(client);
-        }else {
-            Optional<Client> e = clientRepository.getClient(client.getIdClient());
-            if (e.isPresent()){
-                return client;
-            }else{
+        if(validarCampos(client)) {
+            if (client.getIdClient() == null) {
                 return clientRepository.save(client);
+            } else {
+                Optional<Client> clientEncontrado = getClient(client.getIdClient());
+                if (clientEncontrado.isEmpty()) {
+                    return clientRepository.save(client);
+                } else {
+                    return client;
+                }
             }
         }
+        return client;
     }
-
-
     public Client update(Client client){
-        if (client.getIdClient()!=null){
-            Optional<Client> q = clientRepository.getClient(client.getIdClient());
-            if (!q.isEmpty()){
-                if (client.getName() !=null) {
-                    q.get().setName(client.getName());
-                }if (client.getAge()!=null){
-                    q.get().setAge(client.getAge());
-                }if (client.getPassword()!=null){
-                    q.get().setPassword(client.getPassword());
+        if(validarCampos(client)) {
+            if (client.getIdClient() != null) {
+                Optional<Client> clientEncontrado = getClient(client.getIdClient());
+                if (!clientEncontrado.isEmpty()) {
+                    if (client.getName() != null) {
+                        clientEncontrado.get().setName(client.getName());
+                    }
+                    if (client.getAge() != null) {
+                        clientEncontrado.get().setAge(client.getAge());
+                    }
+                    if (client.getPassword() != null) {
+                        clientEncontrado.get().setPassword(client.getPassword());
+                    }
+                    return clientRepository.save(clientEncontrado.get());
                 }
-                clientRepository.save(q.get());
-                return q.get();
-            }else{
-                return client;
             }
-        }else{
             return client;
         }
+        return client;
     }
 
-
-
-
-//    public boolean delete(int id){
-//        boolean flag =false;
-//        Optional<Client>p= clientRepository.getClient(id);
-//        if (p.isPresent()){
-//            clientRepository.delete(p.get());
-//            flag=true;
-//        }
-//        return flag;
-//    }
-
-    public boolean deleteClient (int id){
-        Boolean d =getClient(id).map(client -> {
-            clientRepository.delete(client);
+    public boolean delete(int id){
+        Boolean resultado= getClient(id).map(elemento -> {
+            clientRepository.delete(elemento);
             return true;
         }).orElse(false);
-        return d;
+        return resultado;
     }
 
-
-//    public Client update(Client p){
-//        if (p.getIdClient()!=null){
-//            Optional<Client> q = clientRepository.getClient(p.getIdClient());
-//            if (q.isPresent()){
-//                if (p.getName() !=null) {
-//                    q.get().setName(p.getName());
-//                }if (p.getEmail()!=null){
-//                    q.get().setEmail(p.getEmail());
-//                }if (p.getPassword()!=null){
-//                    q.get().setPassword(p.getPassword());
-//                }if(p.getAge()!=null){
-//                    q.get().setAge(p.getAge());
-//                }
-//                clientRepository.save(q.get());
-//                return q.get();
-//            }else {
-//                return p;
-//            }
-//        }else{
-//            return p;
-//        }
-//    }
-
+    public boolean validarCampos(Client client){
+        return (client.getName().length()<=250 && client.getEmail().length()<=45 && client.getPassword().length()<=45
+                && (client.getAge()>0 && client.getAge()<=100)
+        );
+    }
 
 }
-
-

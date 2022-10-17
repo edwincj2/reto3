@@ -9,6 +9,7 @@ import java.io.Serializable;
 public class Message implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idMessage")
     private Integer idMessage;
     private String messageText;
 
@@ -57,14 +58,4 @@ public class Message implements Serializable {
         this.client = client;
     }
 
-    public Message(Integer idMessage, String messageText, Costume costume, Client client) {
-        this.idMessage = idMessage;
-        this.messageText = messageText;
-        this.costume = costume;
-        this.client = client;
-    }
-
-    public Message() {
-    }
 }
-

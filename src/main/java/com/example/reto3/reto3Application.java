@@ -1,13 +1,13 @@
-package com.grupo2.demo;
+package com.example.reto3;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class RetotresApplication {
+public class reto3Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(RetotresApplication.class, args);
+        SpringApplication.run(reto3Application.class, args);
     }
 
 }

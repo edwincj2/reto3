@@ -2,14 +2,16 @@ package com.example.reto3.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name="reservation")
-public class Reservation {
+public class Reservation implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="idReservation")
     private Integer idReservation;
 
     private Date startDate;
@@ -27,20 +29,9 @@ public class Reservation {
     @JsonIgnoreProperties({"reservations", "messages"})
     private Client client;
 
-
-
     @OneToOne(mappedBy = "reservations")
     @JsonIgnoreProperties("reservations")
     private Score score;
-
-
-    public Score getScore() {
-        return score;
-    }
-
-    public void setScore(Score score) {
-        this.score = score;
-    }
 
     public Integer getIdReservation() {
         return idReservation;
@@ -74,14 +65,6 @@ public class Reservation {
         this.status = status;
     }
 
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public Costume getCostume() {
         return costume;
     }
@@ -90,15 +73,19 @@ public class Reservation {
         this.costume = costume;
     }
 
-    public Reservation() {
+    public Client getClient() {
+        return client;
     }
 
-    public Reservation(Integer idReservation, Date startDate, Date devolutionDate, String status) {
-        this.idReservation = idReservation;
-        this.startDate = startDate;
-        this.devolutionDate = devolutionDate;
-        this.status = status;
+    public void setClient(Client client) {
+        this.client = client;
     }
 
+    public Score getScore() {
+        return score;
+    }
+
+    public void setScore(Score score) {
+        this.score = score;
+    }
 }
-
